@@ -2,6 +2,11 @@
 
 실제 코드 실측 기반(2026-08-09). 확인되지 않은 추측은 "가정" 항목의 것 외에는 적지 않았다.
 
+## 0. (가장 중요) 코드베이스 도메인이 프로젝트 목적과 다름
+
+jobmoa-server는 채용정보 통합(잡 어그리게이터) 서비스로 기획되었으나(2026-09-08, [`01_project_overview/guide.md`](../01_project_overview/guide.md)), 현재 코드는 개인 운동 기록 서비스 `motive-server`를 그대로 복제한 것이다. 아래 1~11번 이슈를 포함해 `06_domain_playbooks`·`09_api_contract`·`10_data_model`·`08_domain_glossary`는 전부 이 레거시 운동 기록 도메인을 실측한 내용이며, 채용정보 도메인 코드는 아직 존재하지 않는다.
+**영향:** 신규 기능(채용사이트 연동, 공고 검색 등)을 설계할 때 기존 `exercise`/`workout`/`fitness`/`recommend`/`aichat` 패키지를 도메인 참고용으로 오인하지 말 것 — 이들은 3계층 구조·에러 처리·MyBatis 패턴 등 **기술적 예시**로만 참고하고, 실제로는 채용정보 도메인 패키지로 교체/신설해야 한다.
+
 ## 1. 관리자(`/admin/**`) 엔드포인트에 role 기반 인가가 없음
 
 `SecurityConfig`는 `/public/**`·`/api/v1/**`·`/swagger-ui/**`를 전부 permitAll로 열어두고, 그 외는 `authenticated()`만 요구한다. `/admin/**`도 `/api/v1/**`에 포함되므로 **permitAll**이다 — 즉 로그인만 하면(`USER` role이어도) 관리자 API(공통코드 CRUD, 운동마스터 CRUD)를 호출할 수 있다. `Role.ADMIN` enum은 존재하지만 `@PreAuthorize` 등으로 검증되는 곳이 코드베이스 어디에도 없다.

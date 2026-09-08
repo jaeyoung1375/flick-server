@@ -1,5 +1,7 @@
 # API 계약 상세 (jobmoa-server API Contract)
 
+> ⚠️ **레거시 도메인:** 아래 엔드포인트는 motive-server(운동 기록 서비스)에서 그대로 복제된 것이며, jobmoa(채용정보 통합 서비스)의 실제 API가 아니다. 인증 관련(`/auth/**`) 엔드포인트와 응답 포맷(`ApiResponse`)은 재사용 가능하지만 `/exercise/**`·`/workout/**`·`/fitness/**`·`/ai-chat/**` 등은 채용정보 도메인 API로 교체될 예정이다.
+
 실측: 전체 컨트롤러의 `@GetMapping`/`@PostMapping`/`@PutMapping`/`@DeleteMapping` (2026-08-09 기준). 모든 경로 앞에 `/api/v1`이 자동으로 붙는다(`WebConfig`). 아래는 컨트롤러에 적힌 경로 그대로 표기.
 
 ## 공통 응답 형태

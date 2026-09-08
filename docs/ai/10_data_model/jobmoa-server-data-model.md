@@ -1,5 +1,7 @@
 # 데이터 모델 상세 (jobmoa-server Data Model)
 
+> ⚠️ **레거시 도메인:** 아래 테이블은 motive-server(운동 기록 서비스)에서 그대로 복제된 것이며, jobmoa(채용정보 통합 서비스)의 실제 데이터 모델이 아니다. `USERS`·`SOCIAL_ACCOUNTS`·공통코드 테이블은 인증/공통 인프라라 재사용 가능하지만 `EXERCISES`·`WORKOUT_RECORD*` 등은 채용정보 도메인(채용공고·채용사이트 등)으로 교체될 예정이다.
+
 > ⚠️ **중요한 제약:** 이 저장소에는 `USERS`·`SOCIAL_ACCOUNTS`·`EXERCISES`·`CMM_CODE`·`CMM_CODE_DTL`·`MENU` 등 대부분 테이블의 **원본 DDL이 없다**(다른 곳에서 이미 생성된 스키마로 추정, `MOTIVE` 스키마). 아래 컬럼 정보는 **MyBatis Mapper XML의 SELECT/INSERT 절에서 실제로 관찰된 컬럼만** 정리한 것이며, 이 목록에 없는 컬럼이 실제 DB에 더 있을 수 있다. 스키마 전체가 필요하면 DB를 직접 조회해서 확인하고, 이 문서를 추측으로 채우지 않는다.
 >
 > `docs/ai/../ddl/workout_record_ddl.sql`만 이 저장소에 포함된 유일한 DDL이며, 그마저 하단에 "확인/조정이 필요한 가정"이 명시돼 있다(원본 주석 그대로 아래에 인용).

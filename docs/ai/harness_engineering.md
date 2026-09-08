@@ -1,6 +1,8 @@
 # 하네스 엔지니어링 (AI Harness Engineering)
 
-이 문서는 `jobmoa-server` 저장소(개인 운동 기록 서비스 백엔드)에서 **AI를 활용해 개발할 때 따르는 하네스(harness) 시스템**의 안내 허브입니다. AI에게 작업을 시키기 전에, 그리고 새 문서를 추가할 때 이 문서부터 확인하세요.
+이 문서는 `jobmoa-server` 저장소(여러 채용사이트 공고를 한곳에 모아 보여주는 채용정보 통합 서비스의 백엔드)에서 **AI를 활용해 개발할 때 따르는 하네스(harness) 시스템**의 안내 허브입니다. AI에게 작업을 시키기 전에, 그리고 새 문서를 추가할 때 이 문서부터 확인하세요.
+
+> ⚠️ **현재 코드베이스는 레거시 상태:** 이 저장소는 개인 운동 기록 서비스 `motive-server`를 복제한 초기 스캐폴딩이다. 기술 골격(§4)은 그대로지만 `06_domain_playbooks`·`09_api_contract`·`10_data_model`·`08_domain_glossary`는 아직 motive-server 시절 운동 기록 도메인을 실측한 내용이며, 채용정보 도메인으로 교체되지 않았다. 프로젝트의 실제 목적은 [`01_project_overview/guide.md`](./01_project_overview/guide.md) 참고.
 
 > 📌 **이 문서의 역할:** 개별 사실(스택·도메인·API 등)은 `docs/ai/01~13` 각 문서가 단일 출처(Single Source of Truth)입니다. 이 문서는 그 문서들을 **어떤 순서로·어떤 상황에 참조하는지**를 안내하는 지도(map)이며, 사실을 중복 기재하지 않습니다. 사실이 바뀌면 해당 번호 문서를 고치고, 이 문서는 구조가 바뀔 때만 갱신합니다.
 
@@ -60,10 +62,11 @@
 
 | 항목 | 내용 |
 |------|------|
-| 역할 | 개인 운동 기록 서비스(jobmoa)의 백엔드 API 서버. 소셜 로그인·운동 프로필 온보딩·운동 기록 CRUD·공통코드 관리 제공 |
+| 역할(목표) | 여러 채용사이트 공고를 통합 조회할 수 있게 하는 채용정보 통합(잡 어그리게이터) 서비스의 백엔드 API 서버 |
+| 역할(현재 코드) | motive-server(개인 운동 기록 서비스)에서 복제한 레거시 코드 그대로 — 소셜 로그인·운동 프로필 온보딩·운동 기록 CRUD·공통코드 관리 (채용정보 도메인 미구현, [`01_project_overview/guide.md`](./01_project_overview/guide.md) 참고) |
 | 스택 | Spring Boot 4.0.5 · Java 17 · MyBatis 4.0.1 · Oracle |
 | 인증 | Spring Security 7 + JWT(HS256) + Redis(refresh token 저장) + 소셜 로그인(카카오/구글/깃허브 OAuth2) |
-| 프론트엔드 | 별도 저장소 `motive-ui`(Next.js) — 여기서 화면·클라이언트 코드를 생성하지 않는다 |
+| 프론트엔드 | 아직 미정. CORS 설정에 남은 `motive-ui`(Next.js) 관련 오리진은 motive-server 시절 잔재 |
 
 상세는 [`02_tech_stack/jobmoa-server-tech-stack.md`](./02_tech_stack/jobmoa-server-tech-stack.md)가 단일 출처이며, 위는 요약만 적었습니다.
 
@@ -90,5 +93,5 @@
 ---
 
 **문서 성격:** 하네스 시스템 안내 허브 (사실은 01~13 문서가 단일 출처)
-**프로젝트:** jobmoa — 개인 운동 기록 서비스 백엔드
-**저장소:** jobmoa-server (github.com/jaeyoung1375/jobmoa-server)
+**프로젝트:** jobmoa — 채용정보 통합(잡 어그리게이터) 서비스 백엔드 (목표. 현재 코드는 motive-server 레거시)
+**저장소:** jobmoa-server

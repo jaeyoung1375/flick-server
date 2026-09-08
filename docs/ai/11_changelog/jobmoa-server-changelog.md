@@ -29,3 +29,8 @@
 - `0fdf8e0` first commit
 
 > 이후 변경부터는 이 문서에 직접 append한다. git log 재요약을 여기 반복하지 않는다(git이 정본).
+
+## JOBMOA-SERVER 포크 이후
+
+- 2026-09-08 — `motive-server`를 `JOBMOA-SERVER`로 복제해 새 프로젝트 시작(build/.gradle/.idea 제외, 패키지 `kr.co.motive`→`kr.co.jobmoa`·프로젝트명 `motive-server`→`jobmoa-server` 일괄 변경, 새 git 저장소로 초기화). Oracle 스키마명(`MOTIVE`)·`motive-ui`/`motive-toy` 등 외부 연동 식별자는 실제 인프라 값이라 변경하지 않음.
+- 2026-09-08 — jobmoa-server의 실제 목적이 "여러 채용사이트 공고를 통합 조회하는 서비스"임을 확인하고 `docs/ai` 하네스를 갱신: [`01_project_overview/guide.md`](../01_project_overview/guide.md)에 목적 기재, `jobmoa-server-overview.md`·`harness_engineering.md`·`08_domain_glossary`·`06_domain_playbooks/guide.md`·`09_api_contract`·`10_data_model`에 "현재 코드는 motive-server 레거시이며 채용정보 도메인 미구현" 경고 추가, `12_known_issues`에 도메인 불일치를 0번 이슈로 등록. 채용정보 도메인 자체는 아직 설계·구현 전(이번 범위 아님).
