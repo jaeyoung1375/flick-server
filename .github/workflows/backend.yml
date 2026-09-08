@@ -1,0 +1,27 @@
+name: Spring Deploy
+
+on:
+  workflow_dispatch:
+
+
+jobs:
+  build:
+    runs-on: [self-hosted]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Grant execute permission
+        run: chmod +x gradlew
+
+      - name: Build
+        run: ./gradlew build -x test --build-cache
+
+      - name: Rename jar
+        run: |
+          cp build/libs/jobmoa-server-0.0.1-SNAPSHOT.jar /opt/app/app.jar
+
+      - name: Restart Spring
+        run: |
+          sudo systemctl restart app.service

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.jobmoa.aichat.mapper.AiChatMapper">
+
+    <!-- 회원의 가장 최근 운동기록 ID (RECORD_DT 기준 최신 1건). 기록이 없으면 결과 없음(→ null) -->
+    <select id="selectLatestWorkoutRecordId" resultType="long">
+      SELECT WORKOUT_RECORD_ID FROM (
+        SELECT WORKOUT_RECORD_ID
+        FROM WORKOUT_RECORD
+        WHERE USER_ID = #{userId, jdbcType=NUMERIC}
+        ORDER BY RECORD_DT DESC
+      )
+      WHERE ROWNUM = 1
+    </select>
+
+    <!-- 해당 운동기록에 포함된 운동들의 대표부위코드(중복 제거) — AI 챗봇의 "다음 추천 부위" 계산 입력값 -->
+    <select id="selectBodyPartCodesByWorkoutRecordId" resultType="string">
+      SELECT DISTINCT E.BODY_PART_CD
+      FROM WORKOUT_RECORD_EXERCISE WRE
+      JOIN EXERCISES E ON E.EXERCISE_ID = WRE.EXERCISE_ID
+      WHERE WRE.WORKOUT_RECORD_ID = #{workoutRecordId, jdbcType=NUMERIC}
+    </select>
+
+</mapper>

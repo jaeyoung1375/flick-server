@@ -1,0 +1,30 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:p6spy:oracle:thin:@yggcv8zldawsd5fk_medium?TNS_ADMIN=/app/oracle/wallet
+    driver-class-name: com.p6spy.engine.spy.P6SpyDriver
+server:
+  port: 9090
+  address: 0.0.0.0
+
+decorator:
+  datasource:
+    p6spy:
+      enable: false
+
+logging:
+  level:
+    p6spy: INFO
+  file:
+    name: /logs/app.log
+
+file:
+  upload:
+    path: /app/upload
+    server: /upload
+
+app:
+  frontend-url: http://168.107.63.120:3000
+  mobile-redirect-scheme: motive-toy://oauth-callback

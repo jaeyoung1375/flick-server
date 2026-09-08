@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.jobmoa.common.file.mapper.FileMapper">
+
+
+    <insert id="insertFile" parameterType="FileDto">
+    <selectKey keyProperty="fileId" resultType="long" order="BEFORE">
+   	 SELECT CMM_FILE_SEQ.NEXTVAL FROM DUAL
+	</selectKey>
+
+	INSERT INTO CMM_FILE(
+			 FILE_ID		 /* 파일아이디 */
+		   , ORG_FILE_NM	 /* 원본파일명 */
+		   , SAVE_FILE_NM    /* 저장파일명 */
+		   , FILE_PATH       /* 파일경로 */
+		   , FILE_SIZE       /* 파일크기 */
+		   , FILE_EXT        /* 파일확장자 */
+		   , TEMP_YN         /* 임시파일여부 */
+		   , TEMP_KEY		 /* 임시파일키 */
+	)VALUES(
+			 #{fileId}       /* 파일아이디 */
+		   , #{orgFileNm}    /* 원본파일명 */
+		   , #{saveFileNm}   /* 저장파일명 */
+		   , #{filePath}     /* 파일경로 */
+		   , #{fileSize}     /* 파일크기 */
+		   , #{fileExt}      /* 파일확장자 */
+		   , #{tempYn}       /* 임시파일여부 */
+		   , #{tempKey}      /* 임시파일키 */
+    )
+    </insert>
+
+
+    <update id="confirmTempFiles" parameterType="String">
+
+    UPDATE CMM_FILE SET
+	TEMP_YN = 'N'
+	WHERE TEMP_KEY = #{tempKey}
+
+    </update>
+
+    <select id="selectTempFiles" resultType="FileDto">
+
+    	SELECT
+	    		 FILE_ID		 /* 파일아이디 */
+			   , ORG_FILE_NM	 /* 원본파일명 */
+			   , SAVE_FILE_NM    /* 저장파일명 */
+			   , FILE_PATH       /* 파일경로 */
+			   , FILE_SIZE       /* 파일크기 */
+			   , FILE_EXT        /* 파일확장자 */
+			   , TEMP_YN         /* 임시파일여부 */
+			   , TEMP_KEY		 /* 임시파일키 */
+		FROM CMM_FILE
+		WHERE TEMP_KEY = #{tempKey}
+    </select>
+
+</mapper>

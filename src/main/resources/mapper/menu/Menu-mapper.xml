@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.jobmoa.menu.mapper.MenuMapper">
+
+     <!-- 전체 메뉴 조회-->
+    <select id="menuList" resultType="menuDto" >
+
+        SELECT
+                  MENU_ID		/* 메뉴아이디 */
+                , MENU_NM		/* 메뉴명    */
+                , MENU_URL		/* 메뉴URL  */
+                , MENU_LEVEL	/* 메뉴레벨  */
+                , MENU_ORD		/* 메뉴정렬순서 */
+                , UP_MENU_ID	/* 상위메뉴아이디 */
+                , TOP_YN		/* 상위여부 */
+        FROM CMM_MENU
+        WHERE USE_YN = 'Y'
+        ORDER BY MENU_LEVEL, MENU_ORD
+
+    </select>
+
+
+
+</mapper>

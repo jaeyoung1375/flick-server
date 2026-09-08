@@ -1,0 +1,110 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '4.0.5'
+	id 'io.spring.dependency-management' version '1.1.7'
+	id 'jacoco'
+}
+
+group = 'kr.co.jobmoa'
+version = '0.0.1-SNAPSHOT'
+description = 'Demo project for Spring Boot'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:4.0.1'
+    implementation "com.oracle.database.jdbc:ojdbc11:21.9.0.0"
+    implementation "com.oracle.database.security:oraclepki:21.9.0.0"
+    implementation "com.oracle.database.security:osdt_core:21.9.0.0"
+    implementation "com.oracle.database.security:osdt_cert:21.9.0.0"
+    implementation 'org.apache.commons:commons-lang3'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'p6spy:p6spy:3.9.0'
+	compileOnly 'org.projectlombok:lombok'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-data-jdbc-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:4.0.1'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+    implementation "org.springframework.boot:spring-boot-starter-validation"
+    implementation "com.fasterxml:classmate:1.7.3"
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    implementation 'com.github.pagehelper:pagehelper-spring-boot-starter:1.4.6'
+    implementation 'org.springframework.ai:spring-ai-starter-model-openai'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom 'org.springframework.ai:spring-ai-bom:2.0.1'
+    }
+}
+
+jacoco {
+	toolVersion = "0.8.12"
+}
+
+def jacocoExcludes = [
+		'**/JobmoaServerApplication*',
+		'**/dto/**',
+		'**/configuration/**',
+		'**/common/response/**',
+		'**/common/code/**',
+		'**/common/interceptor/**',
+		'**/mapper/**',
+]
+
+tasks.named('jacocoTestReport') {
+	dependsOn test
+	reports {
+		xml.required = true
+		html.required = true
+	}
+	classDirectories.setFrom(files(classDirectories.files.collect {
+		fileTree(dir: it, exclude: jacocoExcludes)
+	}))
+}
+
+tasks.named('jacocoTestCoverageVerification') {
+	violationRules {
+		rule {
+			limit {
+				counter = 'LINE'
+				value = 'COVEREDRATIO'
+				minimum = 0.50
+			}
+		}
+	}
+	/**fterEvaluated {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it, exclude: jacocoExcludes)
+		}))
+	} **/
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+	finalizedBy jacocoTestReport
+}
