@@ -2,7 +2,7 @@ server:
   forward-headers-strategy: framework
 spring:
   application:
-    name: jobmoa-server
+    name: flick-server
   profiles:
     include:
     - secret
@@ -11,31 +11,17 @@ spring:
     redis:
       host: localhost
       port: 6379
-  ai:
-    model:
-      chat: openai
-      embedding: none
-      image: none
-      moderation: none
-      audio:
-        speech: none
-        transcription: none
-    openai:
-      chat:
-        options:
-          model: gpt-4o-mini
 #  datasource:
 #    hikari:
 #      connection-init-sql: ALTER SESSION DISABLE PARALLEL DML
 
 mybatis:
   mapper-locations: classpath:/mapper/**/*-mapper.xml
-  type-aliases-package: kr.co.jobmoa
+  type-aliases-package: kr.co.flick
   configuration:
     map-underscore-to-camel-case: true
-    jdbc-type-for-null: VARCHAR  # Oracle에서 null 파라미터 바인딩 시 JdbcType.OTHER(1111) 오류 방지
 pagehelper:
-  helper-dialect: oracle
+  helper-dialect: postgresql
   reasonable: true
   support-methods-arguments: true
   params: count=countSql

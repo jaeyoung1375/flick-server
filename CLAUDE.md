@@ -5,12 +5,12 @@
 ### 명령어
 ```bash
 ./gradlew build / bootRun / test
-./gradlew test --tests "kr.co.jobmoa.SomeServiceTest"
+./gradlew test --tests "kr.co.flick.SomeServiceTest"
 ```
 포트: 9090, 프로파일: local
 
 ### 기술 스택
-Spring Boot 4.0.3 / Java 17 / MyBatis 4.0.1 / Oracle / Spring Security 7 + JWT / Redis / PageHelper / springdoc-openapi 2.5.0
+Spring Boot 4.0.3 / Java 17 / MyBatis 4.0.1 / PostgreSQL / Spring Security 7 + JWT / Redis / PageHelper / springdoc-openapi 2.5.0
 
 ### 주요 규칙
 
@@ -22,13 +22,13 @@ Spring Boot 4.0.3 / Java 17 / MyBatis 4.0.1 / Oracle / Spring Security 7 + JWT /
 Redis: `refresh:{userId}`
 
 **MyBatis**:
-- 언더스코어 → 카멜케이스 자동 변환, null → VARCHAR
+- 언더스코어 → 카멜케이스 자동 변환
 - `<`, `>`, `&`는 CDATA로 감쌀 것
 - `@RequestParam`이 아니라 `@Param`(MyBatis) 사용
-- Oracle 예약어: `"COMMENT"`, `"ROLE"` 등은 따옴표 처리
+- PostgreSQL 예약어: `"COMMENT"`, `"ROLE"` 등은 따옴표 처리 (예약어 목록이 Oracle과 다르므로 새 컬럼/테이블명 추가 시 별도 확인)
 - null NUMBER 값: `#{param, jdbcType=NUMERIC}`
 
-**Oracle 스키마**: 사용자가 별도로 스키마를 명시하지 않는 한, 모든 DB 관련 요청(DDL/DML/조회 등)은 무조건 `MOTIVE` 스키마 기준으로 처리한다.
+**PostgreSQL 스키마**: 사용자가 별도로 스키마를 명시하지 않는 한, 모든 DB 관련 요청(DDL/DML/조회 등)은 무조건 `public` 스키마 기준으로 처리한다.
 
 **에러 처리**: `throw new CustomException(ErrorCode)` → `GlobalExceptionHandler` → `ApiResponse.error()`
 
@@ -36,7 +36,7 @@ Redis: `refresh:{userId}`
 
 ### 패키지 구조
 ```
-kr.co.jobmoa
+kr.co.flick
 ├── admin/{dashboard,log,mapper,user}
 ├── auth/
 ├── common/{code,exception,file,interceptor,response}

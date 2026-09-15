@@ -1,0 +1,113 @@
+// FLICK-SERVER PostgreSQL 스키마 ERD (dbdiagram.io)
+// postgres_schema.sql 기준, 2026-09-15 Oracle 실측 반영
+
+Table cmm_file {
+  file_id       bigint       [pk, note: '파일아이디']
+  org_file_nm   varchar(255) [not null, note: '원본파일명']
+  save_file_nm  varchar(255) [not null, note: '저장파일명']
+  file_path     varchar(100) [not null, note: '파일경로']
+  file_size     bigint       [note: '파일크기']
+  file_ext      varchar(20)  [not null, note: '파일확장자']
+  del_yn        char(1)      [note: '삭제여부(Y/N)']
+  del_dt        timestamp    [note: '삭제일시']
+  temp_yn       char(1)      [note: '임시파일여부(Y/N)']
+  temp_key      varchar(200) [note: '임시파일키']
+
+  Note: '공통 파일'
+}
+
+Table cmm_code {
+  com_cd_id       varchar(100) [pk, note: '공통코드아이디']
+  com_cd_nm       varchar(100) [not null, note: '공통코드명']
+  com_cd_expln    varchar(100) [note: '공통코드설명']
+  use_yn          char(1)      [default: 'Y', note: '사용여부(Y/N)']
+  link_com_cd_id1 varchar(100) [note: '연결공통코드아이디1']
+  link_com_cd_id2 varchar(100) [note: '연결공통코드아이디2']
+  reg_id          varchar(50)  [not null, note: '등록아이디']
+  reg_dt          timestamp    [not null, default: `now()`, note: '등록일시']
+  mod_id          varchar(50)  [note: '변경아이디']
+  mod_dt          timestamp    [note: '변경일시']
+  sort_seq        bigint       [note: '정렬순서']
+
+  Note: '공통코드'
+}
+
+Table cmm_code_dtl {
+  com_cd_id       varchar(100)  [not null, note: '공통코드아이디 (FK)']
+  dtl_cd_id       varchar(100)  [not null, note: '상세코드아이디']
+  dtl_cd_nm       varchar(200)  [not null, note: '상세코드명']
+  dtl_cd_expln    varchar(1000) [note: '상세코드설명']
+  use_yn          varchar(1)    [default: 'Y', note: '사용여부(Y/N)']
+  sort_seq        bigint        [note: '정렬순서']
+  lnkg_dtl_cd_id1 varchar(100)  [note: '연결상세코드아이디1']
+  lnkg_dtl_cd_nm1 varchar(100)  [note: '연결상세코드명1']
+  lnkg_dtl_cd_id2 varchar(100)  [note: '연결상세코드아이디2']
+  lnkg_dtl_cd_nm2 varchar(100)  [note: '연결상세코드명2']
+  reg_id          varchar(50)   [not null, note: '등록아이디']
+  reg_dt          timestamp     [not null, default: `now()`, note: '등록일시']
+  mod_id          varchar(50)   [note: '변경아이디']
+  mod_dt          timestamp     [note: '변경일시']
+
+  indexes {
+    (com_cd_id, dtl_cd_id) [pk]
+  }
+
+  Note: '상세코드'
+}
+
+Table cmm_menu {
+  menu_id    varchar(30)  [pk, note: '메뉴아이디']
+  menu_nm    varchar(200) [note: '메뉴명']
+  menu_url   varchar(200) [note: '메뉴URL']
+  menu_level bigint       [note: '메뉴레벨']
+  menu_ord   bigint       [note: '메뉴정렬순서']
+  up_menu_id varchar(30)  [note: '상위메뉴아이디']
+  top_yn     char(1)      [default: 'N', note: '상위여부(Y/N)']
+  use_yn     char(1)      [default: 'Y', note: '사용여부(Y/N)']
+  reg_id     varchar(30)  [note: '등록아이디 — 매퍼 미사용']
+  reg_dt     char(8)      [note: '등록일시(YYYYMMDD) — 매퍼 미사용']
+
+  Note: '메뉴'
+}
+
+Table users {
+  user_id         bigint       [pk, note: '회원아이디']
+  email           varchar(255) [note: '이메일 — UNIQUE 제약 없음(실측)']
+  password_hash   varchar(255) [note: '비밀번호 해시 (소셜 전용 가입자는 NULL)']
+  status          varchar(20)  [not null, note: '계정상태']
+  name            varchar(50)  [not null, note: '이름']
+  phone           varchar(20)  [note: '휴대폰번호']
+  "ROLE"          varchar(20)  [not null, note: '권한']
+  reg_dt          timestamp    [note: '등록일시']
+  mod_dt          timestamp    [note: '수정일시']
+  profile_file_id bigint       [note: '프로필 파일아이디 (FK)']
+  last_login_dt   timestamp    [note: '마지막 로그인일시']
+  gender          char(2)      [note: '성별']
+  birth           timestamp    [note: '생년월일']
+  nickname        varchar(50)  [note: '닉네임']
+
+  Note: '회원'
+}
+
+Table social_accounts {
+  social_id             bigint       [pk, note: '소셜계정아이디']
+  user_id               bigint       [note: '회원아이디 (FK)']
+  provider              varchar(100) [not null, note: '소셜 로그인 제공자']
+  provider_user_id      varchar(100) [not null, note: '제공자측 사용자 고유아이디']
+  reg_dt                timestamp    [note: '등록일시']
+  mod_dt                timestamp    [note: '수정일시 — 매퍼 미사용']
+  profile_file_id       bigint       [note: '프로필 파일아이디 (FK) — 매퍼 미사용']
+  provider_access_token text         [note: '소셜 제공자 액세스 토큰 — 매퍼 미사용']
+  expires_at            timestamp    [note: '토큰 만료일시 — 매퍼 미사용']
+
+  indexes {
+    (provider, provider_user_id) [unique]
+  }
+
+  Note: '소셜 로그인 연동'
+}
+
+Ref: users.profile_file_id > cmm_file.file_id
+Ref: cmm_code_dtl.com_cd_id > cmm_code.com_cd_id
+Ref: social_accounts.user_id > users.user_id
+Ref: social_accounts.profile_file_id > cmm_file.file_id

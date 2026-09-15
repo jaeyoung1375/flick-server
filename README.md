@@ -1,1 +1,1 @@
-# jobmoa-server
+# flick-server

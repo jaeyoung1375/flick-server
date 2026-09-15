@@ -5,7 +5,7 @@ plugins {
 	id 'jacoco'
 }
 
-group = 'kr.co.jobmoa'
+group = 'kr.co.flick'
 version = '0.0.1-SNAPSHOT'
 description = 'Demo project for Spring Boot'
 
@@ -30,10 +30,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:4.0.1'
-    implementation "com.oracle.database.jdbc:ojdbc11:21.9.0.0"
-    implementation "com.oracle.database.security:oraclepki:21.9.0.0"
-    implementation "com.oracle.database.security:osdt_core:21.9.0.0"
-    implementation "com.oracle.database.security:osdt_cert:21.9.0.0"
+    runtimeOnly 'org.postgresql:postgresql:42.7.13'
     implementation 'org.apache.commons:commons-lang3'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3'
     implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -53,13 +50,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'com.github.pagehelper:pagehelper-spring-boot-starter:1.4.6'
-    implementation 'org.springframework.ai:spring-ai-starter-model-openai'
-}
-
-dependencyManagement {
-    imports {
-        mavenBom 'org.springframework.ai:spring-ai-bom:2.0.1'
-    }
 }
 
 jacoco {
@@ -67,7 +57,7 @@ jacoco {
 }
 
 def jacocoExcludes = [
-		'**/JobmoaServerApplication*',
+		'**/FlickServerApplication*',
 		'**/dto/**',
 		'**/configuration/**',
 		'**/common/response/**',
