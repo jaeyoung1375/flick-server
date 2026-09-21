@@ -7,8 +7,9 @@ spring:
     driver-class-name: com.p6spy.engine.spy.P6SpyDriver
   data:
     redis:
-      host: localhost
+      host: 152.67.196.0
       port: 6379
+      password: MyRedisPass123!
   servlet:
     multipart:
      max-file-size: 10MB
