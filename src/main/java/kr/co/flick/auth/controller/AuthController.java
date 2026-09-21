@@ -2,9 +2,6 @@ package kr.co.flick.auth.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import kr.co.flick.auth.dto.MobileRefreshRequestDto;
-import kr.co.flick.auth.dto.MobileTokenResponseDto;
-import kr.co.flick.auth.dto.OAuthExchangeRequestDto;
 import kr.co.flick.auth.dto.TokenResponseDto;
 import kr.co.flick.auth.dto.User;
 import kr.co.flick.auth.dto.UserProfileDto;
@@ -55,44 +52,6 @@ public class AuthController {
 
         return ApiResponse.ok(responseDto);
 
-    }
-
-    /**
-     * 모바일 전용 refresh — /refresh와 달리 refreshToken을 쿠키가 아닌 바디로 받는다
-     * (네이티브 앱은 httpOnly 쿠키를 저장·전송하지 않으므로 시큐어 스토리지에 직접 보관한다).
-     */
-    @PostMapping("/refresh/mobile")
-    public ApiResponse<MobileTokenResponseDto> refreshMobile(@RequestBody MobileRefreshRequestDto request) {
-
-        if (request.getRefreshToken() == null) {
-            throw new CustomException(UserErrorCode.INVALID_REFRESH_TOKEN);
-        }
-
-        UserResponseDto result = authService.refresh(request.getRefreshToken());
-
-        MobileTokenResponseDto responseDto = MobileTokenResponseDto
-                .builder()
-                .accessToken(result.getAccessToken())
-                .refreshToken(result.getRefreshToken())
-                .isNew(result.isNew())
-                .build();
-
-        return ApiResponse.ok(responseDto);
-    }
-
-    @PostMapping("/exchange")
-    public ApiResponse<MobileTokenResponseDto> exchange(@RequestBody OAuthExchangeRequestDto request) {
-
-        UserResponseDto result = authService.exchangeCode(request.getCode());
-
-        MobileTokenResponseDto responseDto = MobileTokenResponseDto
-                .builder()
-                .accessToken(result.getAccessToken())
-                .refreshToken(result.getRefreshToken())
-                .isNew(result.isNew())
-                .build();
-
-        return ApiResponse.ok(responseDto);
     }
 
     @PostMapping("/logout")

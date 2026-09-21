@@ -75,4 +75,18 @@ public class JwtTokenUtil {
         }
 
     }
+
+    public String getRole(String token){
+        try{
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(key())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+            return claims.get("role", String.class);
+        }catch(JwtException | IllegalArgumentException e){
+            throw new CustomException(UserErrorCode.INVALID_REFRESH_TOKEN);
+        }
+
+    }
 }

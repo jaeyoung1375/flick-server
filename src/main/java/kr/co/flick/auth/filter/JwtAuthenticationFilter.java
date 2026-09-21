@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -36,16 +38,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try{
             Long userId = jwtTokenUtil.getUserId(token);
+            String role = jwtTokenUtil.getRole(token);
+            List<GrantedAuthority> authorities =  role != null ? List.of(new SimpleGrantedAuthority("ROLE_" + role)) : List.of();
             Authentication authentication = new UsernamePasswordAuthenticationToken(
                     userId,
                     null,
-                    List.of()
+                    authorities
             );
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        }catch (CustomException e){
-
+        }catch(CustomException e){
+            log.error(e.getMessage());
         }
 
 

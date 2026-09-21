@@ -1,7 +1,5 @@
 package kr.co.flick.auth.service;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import kr.co.flick.auth.dto.SocialAccount;
 import kr.co.flick.auth.dto.User;
 import kr.co.flick.auth.dto.UserInsertDto;
@@ -14,7 +12,6 @@ import kr.co.flick.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

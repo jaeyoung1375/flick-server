@@ -91,22 +91,6 @@ public class SocialOauth2SuccessHandler implements AuthenticationSuccessHandler 
 
         UserResponseDto result = authService.socialLogin(socialAccount, name, email);
 
-        HttpSession session = request.getSession(false);
-        boolean isMobile = session != null
-                && Boolean.TRUE.equals(session.getAttribute(MobileAwareOAuth2AuthorizationRequestResolver.MOBILE_SESSION_ATTR));
-        if (session != null) {
-            session.removeAttribute(MobileAwareOAuth2AuthorizationRequestResolver.MOBILE_SESSION_ATTR);
-        }
-
-        if (isMobile) {
-            String code = UUID.randomUUID().toString();
-            // accessToken/refreshToken(JWT)엔 '|' 문자가 나오지 않으므로 구분자로 사용
-            String payload = result.getAccessToken() + "|" + result.getRefreshToken() + "|" + result.isNew();
-            redisTemplate.opsForValue().set("oauth:exchange:" + code, payload, Duration.ofSeconds(60));
-            response.sendRedirect(mobileRedirectScheme + "?code=" + code);
-            return;
-        }
-
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", result.getRefreshToken())
                 .httpOnly(true) // JS에서 document.cookie로 못 읽음 (XSS 방어)
                 .secure(false)  // HTTPS에서만 전송 (local이면 false로)

@@ -1,7 +1,6 @@
 package kr.co.flick.configuration;
 
 import kr.co.flick.auth.GithubEmailOAuth2UserService;
-import kr.co.flick.auth.MobileAwareOAuth2AuthorizationRequestResolver;
 import kr.co.flick.auth.SocialOauth2SuccessHandler;
 import kr.co.flick.auth.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
@@ -35,14 +34,14 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/public/**", "/api/v1/**", "/swagger-ui/**").permitAll()
+                        .requestMatchers("/public/**", "/api/v1/**", "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(oauth -> oauth
                         .authorizationEndpoint(auth -> auth
                                 .authorizationRequestResolver(
-                                        mobileAwareAuthorizationRequestResolver(clientRegistrationRepository)
+                                        authorizationRequestResolver(clientRegistrationRepository)
                                 )
                         )
                         .successHandler(socialOauth2SuccessHandler)
@@ -52,14 +51,7 @@ public class SecurityConfig {
         return http.build();
     }
 
-    /**
-     * 모바일 앱(?platform=mobile) 요청을 세션에 마킹해서 SocialOauth2SuccessHandler가 리다이렉트 방식을 분기하게 한다.
-     */
-    @Bean
-    public OAuth2AuthorizationRequestResolver mobileAwareAuthorizationRequestResolver(
-            ClientRegistrationRepository repo) {
-        return new MobileAwareOAuth2AuthorizationRequestResolver(authorizationRequestResolver(repo));
-    }
+
 
     /**
      * 카카오는 PKCE 미지원 → code_challenge/code_challenge_method 파라미터 제거
