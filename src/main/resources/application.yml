@@ -2,7 +2,6 @@ server:
   forward-headers-strategy: framework
 spring:
   application:
-    name: motive-server
   profiles:
     include:
     - secret
@@ -17,12 +16,9 @@ spring:
 
 mybatis:
   mapper-locations: classpath:/mapper/**/*-mapper.xml
-  type-aliases-package: kr.co.motive
   configuration:
     map-underscore-to-camel-case: true
-    jdbc-type-for-null: VARCHAR  # Oracle에서 null 파라미터 바인딩 시 JdbcType.OTHER(1111) 오류 방지
 pagehelper:
-  helper-dialect: oracle
   reasonable: true
   support-methods-arguments: true
   params: count=countSql

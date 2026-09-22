@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.flick.payment.mapper.PaymentMapper">
+
+    <!-- 결제 이력 저장 -->
+    <insert id="insertPaymentHistory" parameterType="PaymentHistoryDto">
+
+        INSERT INTO PAYMENT_HISTORY (
+            PAYMENT_ID
+          , USER_ID
+          , SUBSCRIPTION_ID
+          , PG_TRANSACTION_ID
+          , PAYMENT_KEY
+          , AMOUNT
+          , STATUS
+          , APPROVED_AT
+          , RAW_RESPONSE
+          , REG_ID
+        ) VALUES (
+            NEXTVAL('payment_history_seq')
+          , #{userId}
+          , #{subscriptionId, jdbcType=NUMERIC}
+          , #{pgTransactionId}
+          , #{paymentKey}
+          , #{amount}
+          , #{status}
+          , #{approvedAt, jdbcType=TIMESTAMP}
+          , #{rawResponse, jdbcType=OTHER}::jsonb
+          , ''
+        )
+
+    </insert>
+
+</mapper>
