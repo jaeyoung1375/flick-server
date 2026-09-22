@@ -3,7 +3,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="kr.co.flick.auth.mapper.AuthMapper">
+<mapper namespace="kr.co.motive.auth.mapper.AuthMapper">
 
     <!-- provider + providerUserId로 연동된 소셜 계정 조회 -->
     <select id="findSocialAccount" resultType="SocialAccount">
@@ -60,7 +60,7 @@
     <!-- 신규 회원 등록 (USERS_SEQ로 채번된 userId가 selectKey를 통해 dto에 채워짐) -->
     <insert id="insertUser" parameterType="UserInsertDto">
         <selectKey keyProperty="userId" resultType="long" order="BEFORE">
-            SELECT nextval('USERS_SEQ')
+            SELECT USERS_SEQ.NEXTVAL FROM DUAL
         </selectKey>
 
         INSERT INTO USERS (
@@ -83,8 +83,8 @@
             #{name},
             #{phone},
             #{role},
-            CURRENT_TIMESTAMP,
-            CURRENT_TIMESTAMP,
+            SYSDATE,
+            SYSDATE,
             #{gender},
             #{birth}
         )
@@ -99,18 +99,18 @@
             , PROVIDER_USER_ID  /* 제공자측 사용자 고유아이디 */
             , REG_DT            /* 등록일시 */
         ) VALUES (
-            nextval('SOCIAL_SEQ'),
+            SOCIAL_SEQ.NEXTVAL,
             #{userId},
             #{provider},
             #{providerUserId},
-            CURRENT_TIMESTAMP
+            SYSDATE
         )
     </insert>
 
     <!-- 최근 로그인 일시 갱신 -->
     <update id="updateLastLoginDt" parameterType="long">
         UPDATE USERS
-        SET LAST_LOGIN_DT = CURRENT_TIMESTAMP
+        SET LAST_LOGIN_DT = SYSDATE
         WHERE USER_ID = #{userId}
     </update>
 
@@ -120,7 +120,7 @@
         SET NICKNAME = #{nickname}
           , GENDER = #{gender}
           , BIRTH = TO_DATE(#{birth}, 'YYYYMMDD')
-          , MOD_DT = CURRENT_TIMESTAMP
+          , MOD_DT = SYSDATE
         WHERE USER_ID = #{userId, jdbcType=NUMERIC}
     </update>
 
@@ -128,7 +128,7 @@
     <update id="updateProfileFileId">
         UPDATE USERS
         SET PROFILE_FILE_ID = #{profileFileId, jdbcType=NUMERIC}
-          , MOD_DT = CURRENT_TIMESTAMP
+          , MOD_DT = SYSDATE
         WHERE USER_ID = #{userId, jdbcType=NUMERIC}
     </update>
 </mapper>

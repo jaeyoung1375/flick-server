@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.motive.admin.exercise.mapper.AdminExerciseMapper">
+
+    <!-- 운동 목록 조회 -->
+    <select id="getExerciseList" resultType="ExerciseResponseDto">
+
+        SELECT
+               EXERCISE_ID  /* 운동아이디 */
+             , NAME         /* 운동명 */
+             , BODY_PART_CD
+             , EQUIPMENT_CD
+             , (SELECT DTL_CD_NM FROM CMM_CODE_DTL WHERE COM_CD_ID = 'BODY_PART_CD' AND DTL_CD_ID = E.BODY_PART_CD) AS BODY_PART_NM /* 대표부위코드 */
+             , (SELECT DTL_CD_NM FROM CMM_CODE_DTL WHERE COM_CD_ID = 'EXERCISE_EQUIPMENT_CD' AND DTL_CD_ID = E.EQUIPMENT_CD) AS EQUIPMENT_NM  /* 요구장비코드 */
+             , IMAGE_FILE_ID /* 이미지파일아이디 */
+             , REG_DT       /* 등록일시 */
+             , MOD_DT       /* 변경일시 */
+        FROM EXERCISES E
+        <where>
+            <if test="bodyPartCd != null and bodyPartCd != ''">
+                AND E.BODY_PART_CD = #{bodyPartCd}
+            </if>
+            <if test="equipmentCd != null and equipmentCd != ''">
+                AND E.EQUIPMENT_CD = #{equipmentCd}
+            </if>
+            <if test="name != null and name != ''">
+                AND E.NAME LIKE '%' || #{name} || '%'
+            </if>
+        </where>
+        ORDER BY EXERCISE_ID DESC
+
+    </select>
+
+    <!-- 운동 상세 조회 -->
+    <select id="getExercise" resultType="ExerciseResponseDto">
+
+      SELECT
+                EXERCISE_ID  /* 운동아이디 */
+              , NAME         /* 운동명 */
+              , BODY_PART_CD
+              , EQUIPMENT_CD
+              , (SELECT DTL_CD_NM FROM CMM_CODE_DTL WHERE COM_CD_ID = 'BODY_PART_CD' AND DTL_CD_ID = E.BODY_PART_CD) AS BODY_PART_NM /* 대표부위코드 */
+              , (SELECT DTL_CD_NM FROM CMM_CODE_DTL WHERE COM_CD_ID = 'EXERCISE_EQUIPMENT_CD' AND DTL_CD_ID = E.EQUIPMENT_CD) AS EQUIPMENT_NM  /* 요구장비코드 */
+              , IMAGE_FILE_ID /* 이미지파일아이디 */
+              , REG_DT       /* 등록일시 */
+              , MOD_DT       /* 변경일시 */
+      FROM EXERCISES
+      WHERE EXERCISE_ID = #{exerciseId, jdbcType=NUMERIC}
+
+    </select>
+
+    <!-- 운동 등록 (EXERCISE_ID는 IDENTITY 컬럼) -->
+    <insert id="insertExercise">
+      INSERT INTO EXERCISES (
+          NAME           /* 운동명 */
+        , BODY_PART_CD    /* 대표부위코드 */
+        , EQUIPMENT_CD    /* 요구장비코드 */
+        , IMAGE_FILE_ID   /* 이미지파일아이디 */
+        , REG_DT          /* 등록일시 */
+        , MOD_DT          /* 변경일시 */
+      ) VALUES (
+          #{dto.name}
+        , #{dto.bodyPartCd}
+        , #{dto.equipmentCd, jdbcType=VARCHAR}
+        , #{dto.imageFileId, jdbcType=NUMERIC}
+        , SYSDATE
+        , SYSDATE
+      )
+    </insert>
+
+    <!-- 운동 수정 -->
+    <update id="updateExercise">
+      UPDATE EXERCISES
+      SET NAME = #{dto.name}
+        , BODY_PART_CD = #{dto.bodyPartCd}
+        , EQUIPMENT_CD = #{dto.equipmentCd, jdbcType=VARCHAR}
+        , IMAGE_FILE_ID = #{dto.imageFileId, jdbcType=NUMERIC}
+        , MOD_DT = SYSDATE
+      WHERE EXERCISE_ID = #{exerciseId, jdbcType=NUMERIC}
+    </update>
+
+    <!-- 운동 삭제 -->
+    <delete id="deleteExercise">
+      DELETE FROM EXERCISES
+      WHERE EXERCISE_ID = #{exerciseId, jdbcType=NUMERIC}
+    </delete>
+
+</mapper>

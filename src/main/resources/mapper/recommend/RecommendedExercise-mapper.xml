@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.motive.recommend.mapper.RecommendedExerciseMapper">
+
+    <!--
+      "오늘의 조합"(1~5)을 하나 고르는 건 별도 쿼리(pickRandomGroup)로 분리했다 — DUAL에서
+      DBMS_RANDOM.VALUE를 뽑는 서브쿼리를 같은 쿼리 안에서 CROSS JOIN으로 합치면, Oracle
+      옵티마이저가 뷰 머징으로 그 서브쿼리를 행마다 다시 평가해버려 그룹이 뒤섞이는
+      문제가 있었다(실측 확인됨). groupNo를 Java에서 미리 확정해 바인드 파라미터로
+      넘기면 이 문제 자체가 생기지 않는다.
+    -->
+    <select id="pickRandomGroup" resultType="int">
+      SELECT TRUNC(DBMS_RANDOM.VALUE(1, 6)) FROM DUAL
+    </select>
+
+    <!--
+      [groupNo]에 속한 부위의 추천 운동 중 무작위 N개를 뽑아 노출 순서(SORT_NO)로
+      재정렬해 조회한다.
+      조합(부위코드 기준): 1=등+이두(02,06) / 2=가슴+삼두(01,05) / 3=어깨+코어(04,07) /
+      4=하체(03) / 5=이두+삼두(05,06)
+      — 실제로 헬스장에서 같이 하는 부위끼리만 묶어서, 벤치프레스+스쿼트처럼 무관한 부위가
+      한 화면에 섞여 나오지 않게 하기 위함이다. 05/06(삼두/이두)처럼 한 부위가 여러 조합에
+      동시에 속할 수 있어서(CASE로 부위→그룹을 1:1로 못 박을 수 없음) <choose>로 조합별
+      부위코드 목록을 그냥 나열한다. 조합이 늘어나면 <when>과 pickRandomGroup의
+      DBMS_RANDOM.VALUE 상한을 함께 맞춰서 늘린다.
+    -->
+    <select id="getRandomRecommendedExercisesByGroup" resultType="RecommendedExerciseResponseDto">
+
+      SELECT T.*
+      FROM (
+        SELECT
+                  RE.RECOMMENDED_EXERCISE_ID /* 추천운동아이디 */
+                , RE.EXERCISE_ID             /* 운동아이디 */
+                , E.NAME AS EXERCISE_NAME    /* 운동명 */
+                , CCD.DTL_CD_NM AS BODY_PART_NM /* 부위코드명 */
+                , E.IMAGE_FILE_ID            /* 이미지파일아이디 */
+                , RE.SETS                    /* 권장 세트 수 */
+                , RE.WEIGHT                  /* 권장 중량 */
+                , RE.REPS                    /* 권장 횟수 */
+                , RE.DURATION_MIN            /* 예상 소요 시간(분) */
+                , RE.SORT_NO                 /* 노출 순서 */
+        FROM RECOMMENDED_EXERCISE RE
+        JOIN EXERCISES E ON E.EXERCISE_ID = RE.EXERCISE_ID
+        LEFT JOIN CMM_CODE_DTL CCD ON CCD.COM_CD_ID = 'BODY_PART_CD' AND CCD.DTL_CD_ID = E.BODY_PART_CD
+        WHERE E.BODY_PART_CD IN
+        <choose>
+          <when test="groupNo == 1">('02', '06')</when>
+          <when test="groupNo == 2">('01', '05')</when>
+          <when test="groupNo == 3">('04', '07')</when>
+          <when test="groupNo == 4">('03')</when>
+          <otherwise>('05', '06')</otherwise>
+        </choose>
+        ORDER BY DBMS_RANDOM.VALUE
+      ) T
+      WHERE ROWNUM <![CDATA[<=]]> #{count, jdbcType=NUMERIC}
+      ORDER BY T.SORT_NO
+
+    </select>
+
+</mapper>

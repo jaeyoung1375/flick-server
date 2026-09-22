@@ -2,7 +2,6 @@ server:
   forward-headers-strategy: framework
 spring:
   application:
-    name: flick-server
   profiles:
     include:
     - secret
@@ -17,11 +16,9 @@ spring:
 
 mybatis:
   mapper-locations: classpath:/mapper/**/*-mapper.xml
-  type-aliases-package: kr.co.flick
   configuration:
     map-underscore-to-camel-case: true
 pagehelper:
-  helper-dialect: postgresql
   reasonable: true
   support-methods-arguments: true
   params: count=countSql
