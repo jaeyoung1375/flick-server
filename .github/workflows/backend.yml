@@ -20,7 +20,7 @@ jobs:
 
       - name: Rename jar
         run: |
-          cp build/libs/flick-server-0.0.1-SNAPSHOT.jar /opt/app/app.jar
+          cp build/libs/motive-server-0.0.1-SNAPSHOT.jar /opt/app/app.jar
 
       - name: Restart Spring
         run: |

@@ -3,13 +3,12 @@ spring:
     activate:
       on-profile: local
   datasource:
-    url: jdbc:p6spy:postgresql://152.67.196.0:5432/postgres
+    url: jdbc:p6spy:oracle:thin:@yggcv8zldawsd5fk_medium?TNS_ADMIN=C:/wallet
     driver-class-name: com.p6spy.engine.spy.P6SpyDriver
   data:
     redis:
-      host: 152.67.196.0
+      host: localhost
       port: 6379
-      password: MyRedisPass123!
   servlet:
     multipart:
      max-file-size: 10MB
@@ -26,7 +25,7 @@ decorator:
 logging:
   level:
     p6spy: INFO
-    kr.co.flick: DEBUG                               # 서비스/매퍼 레벨 로그 활성화
+    kr.co.motive: DEBUG                               # 서비스/매퍼 레벨 로그 활성화
     org.springframework.security: DEBUG              # Security 필터 흐름 전체 출력
     org.springframework.web.servlet.mvc: DEBUG       # MVC 경로 매핑 확인용
 
@@ -36,5 +35,5 @@ file:
     server: /upload
 app:
   frontend-url: http://localhost:3000
-  mobile-redirect-scheme: motive-toy://oauth-callback
+  mobile-redirect-scheme: motive://oauth-callback
     
