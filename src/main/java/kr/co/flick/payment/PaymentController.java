@@ -2,7 +2,6 @@ package kr.co.flick.payment;
 
 import kr.co.flick.payment.dto.PaymentConfirmDto;
 import kr.co.flick.payment.service.PaymentService;
-import kr.co.flick.toss.service.TossPaymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
