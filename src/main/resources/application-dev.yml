@@ -25,5 +25,4 @@ file:
     server: /upload
 
 app:
-  frontend-url: http://168.107.63.120:3000
-  mobile-redirect-scheme: motive-toy://oauth-callback
+  frontend-url: localhost:3000

@@ -1,11 +1,12 @@
 server:
   forward-headers-strategy: framework
 spring:
-  application:
   profiles:
     include:
     - secret
     active: local
+  config:
+    import: optional:file:.env[.properties]
   data:
     redis:
       host: localhost
@@ -16,6 +17,7 @@ spring:
 
 mybatis:
   mapper-locations: classpath:/mapper/**/*-mapper.xml
+  type-aliases-package: kr.co.flick
   configuration:
     map-underscore-to-camel-case: true
 pagehelper:

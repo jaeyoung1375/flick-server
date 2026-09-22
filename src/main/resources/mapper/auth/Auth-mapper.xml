@@ -3,7 +3,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="kr.co.motive.auth.mapper.AuthMapper">
+<mapper namespace="kr.co.flick.auth.mapper.AuthMapper">
 
     <!-- provider + providerUserId로 연동된 소셜 계정 조회 -->
     <select id="findSocialAccount" resultType="SocialAccount">
@@ -17,100 +17,100 @@
     <select id="findUser" resultType="User">
         SELECT
             USER_ID             /* 회원아이디 */
-            , EMAIL             /* 이메일 */
-            , PASSWORD_HASH     /* 비밀번호 해시 */
-            , STATUS            /* 계정상태 */
-            , NAME              /* 이름 */
-            , PHONE             /* 휴대폰번호 */
-            , "ROLE"            /* 권한 */
-            , REG_DT            /* 등록일시 */
-            , MOD_DT            /* 수정일시 */
-            , PROFILE_FILE_ID   /* 프로필 파일아이디 */
-            , LAST_LOGIN_DT     /* 마지막 로그인일시 */
-            , GENDER            /* 성별 */
-            , BIRTH             /* 생년월일 */
-            , NICKNAME          /* 닉네임 */
+             , EMAIL             /* 이메일 */
+             , PASSWORD_HASH     /* 비밀번호 해시 */
+             , STATUS            /* 계정상태 */
+             , NAME              /* 이름 */
+             , PHONE             /* 휴대폰번호 */
+             , "ROLE"            /* 권한 */
+             , REG_DT            /* 등록일시 */
+             , MOD_DT            /* 수정일시 */
+             , PROFILE_FILE_ID   /* 프로필 파일아이디 */
+             , LAST_LOGIN_DT     /* 마지막 로그인일시 */
+             , GENDER            /* 성별 */
+             , BIRTH             /* 생년월일 */
+             , NICKNAME          /* 닉네임 */
         FROM USERS
         WHERE USER_ID = #{userId}
-        AND STATUS = 'ACTIVE'
+          AND STATUS = 'ACTIVE'
     </select>
 
     <!-- email로 회원 조회 (ACTIVE 상태만) — 소셜 최초 연동 시 기존 이메일 가입 여부 확인용 -->
     <select id="findByEmail" resultType="User">
         SELECT
             USER_ID             /* 회원아이디 */
-            , EMAIL             /* 이메일 */
-            , PASSWORD_HASH     /* 비밀번호 해시 */
-            , STATUS            /* 계정상태 */
-            , NAME              /* 이름 */
-            , PHONE             /* 휴대폰번호 */
-            , "ROLE"            /* 권한 */
-            , REG_DT            /* 등록일시 */
-            , MOD_DT            /* 수정일시 */
-            , PROFILE_FILE_ID   /* 프로필 파일아이디 */
-            , LAST_LOGIN_DT     /* 마지막 로그인일시 */
-            , GENDER            /* 성별 */
-            , BIRTH             /* 생년월일 */
-            , NICKNAME          /* 닉네임 */
+             , EMAIL             /* 이메일 */
+             , PASSWORD_HASH     /* 비밀번호 해시 */
+             , STATUS            /* 계정상태 */
+             , NAME              /* 이름 */
+             , PHONE             /* 휴대폰번호 */
+             , "ROLE"            /* 권한 */
+             , REG_DT            /* 등록일시 */
+             , MOD_DT            /* 수정일시 */
+             , PROFILE_FILE_ID   /* 프로필 파일아이디 */
+             , LAST_LOGIN_DT     /* 마지막 로그인일시 */
+             , GENDER            /* 성별 */
+             , BIRTH             /* 생년월일 */
+             , NICKNAME          /* 닉네임 */
         FROM USERS
         WHERE EMAIL = #{email}
-        AND STATUS = 'ACTIVE'
+          AND STATUS = 'ACTIVE'
     </select>
 
     <!-- 신규 회원 등록 (USERS_SEQ로 채번된 userId가 selectKey를 통해 dto에 채워짐) -->
     <insert id="insertUser" parameterType="UserInsertDto">
         <selectKey keyProperty="userId" resultType="long" order="BEFORE">
-            SELECT USERS_SEQ.NEXTVAL FROM DUAL
+            SELECT nextval('USERS_SEQ')
         </selectKey>
 
         INSERT INTO USERS (
-            USER_ID         /* 회원아이디 */
-            , EMAIL         /* 이메일 */
-            , PASSWORD_HASH /* 비밀번호 해시 (소셜 전용 가입자는 NULL) */
-            , STATUS        /* 계정상태 */
-            , NAME          /* 이름 */
-            , PHONE         /* 휴대폰번호 */
-            , "ROLE"        /* 권한 */
-            , REG_DT        /* 등록일시 */
-            , MOD_DT        /* 변경일시 */
-            , GENDER        /* 성별 */
-            , BIRTH         /* 생년월일 */
+        USER_ID         /* 회원아이디 */
+        , EMAIL         /* 이메일 */
+        , PASSWORD_HASH /* 비밀번호 해시 (소셜 전용 가입자는 NULL) */
+        , STATUS        /* 계정상태 */
+        , NAME          /* 이름 */
+        , PHONE         /* 휴대폰번호 */
+        , "ROLE"        /* 권한 */
+        , REG_DT        /* 등록일시 */
+        , MOD_DT        /* 변경일시 */
+        , GENDER        /* 성별 */
+        , BIRTH         /* 생년월일 */
         ) VALUES (
-            #{userId},
-            #{email},
-            #{passwordHash},
-            #{status},
-            #{name},
-            #{phone},
-            #{role},
-            SYSDATE,
-            SYSDATE,
-            #{gender},
-            #{birth}
+        #{userId},
+        #{email},
+        #{passwordHash},
+        #{status},
+        #{name},
+        #{phone},
+        #{role},
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP,
+        #{gender},
+        #{birth}
         )
     </insert>
 
     <!-- 회원에 소셜 계정 연동 정보 등록 -->
     <insert id="insertSocialAccount">
         INSERT INTO SOCIAL_ACCOUNTS (
-            SOCIAL_ID           /* 소셜계정아이디 (SOCIAL_SEQ 채번) */
-            , USER_ID           /* 회원아이디 (FK) */
-            , PROVIDER          /* 소셜 로그인 제공자 */
-            , PROVIDER_USER_ID  /* 제공자측 사용자 고유아이디 */
-            , REG_DT            /* 등록일시 */
+                                      SOCIAL_ID           /* 소셜계정아이디 (SOCIAL_SEQ 채번) */
+                                    , USER_ID           /* 회원아이디 (FK) */
+                                    , PROVIDER          /* 소셜 로그인 제공자 */
+                                    , PROVIDER_USER_ID  /* 제공자측 사용자 고유아이디 */
+                                    , REG_DT            /* 등록일시 */
         ) VALUES (
-            SOCIAL_SEQ.NEXTVAL,
-            #{userId},
-            #{provider},
-            #{providerUserId},
-            SYSDATE
-        )
+                     nextval('SOCIAL_SEQ'),
+                     #{userId},
+                     #{provider},
+                     #{providerUserId},
+                     CURRENT_TIMESTAMP
+                 )
     </insert>
 
     <!-- 최근 로그인 일시 갱신 -->
     <update id="updateLastLoginDt" parameterType="long">
         UPDATE USERS
-        SET LAST_LOGIN_DT = SYSDATE
+        SET LAST_LOGIN_DT = CURRENT_TIMESTAMP
         WHERE USER_ID = #{userId}
     </update>
 
@@ -120,7 +120,7 @@
         SET NICKNAME = #{nickname}
           , GENDER = #{gender}
           , BIRTH = TO_DATE(#{birth}, 'YYYYMMDD')
-          , MOD_DT = SYSDATE
+          , MOD_DT = CURRENT_TIMESTAMP
         WHERE USER_ID = #{userId, jdbcType=NUMERIC}
     </update>
 
@@ -128,7 +128,7 @@
     <update id="updateProfileFileId">
         UPDATE USERS
         SET PROFILE_FILE_ID = #{profileFileId, jdbcType=NUMERIC}
-          , MOD_DT = SYSDATE
+          , MOD_DT = CURRENT_TIMESTAMP
         WHERE USER_ID = #{userId, jdbcType=NUMERIC}
     </update>
 </mapper>

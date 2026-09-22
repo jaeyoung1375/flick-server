@@ -34,13 +34,9 @@ public class SocialOauth2SuccessHandler implements AuthenticationSuccessHandler 
 
     private final AuthService authService;
 
-    private final StringRedisTemplate redisTemplate;
 
     @Value("${app.frontend-url}")
     private String frontendUrl;
-
-    @Value("${app.mobile-redirect-scheme}")
-    private String mobileRedirectScheme;
 
     @Value("${jwt.refresh-exp-ms}")
     private long refreshExpMs;

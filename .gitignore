@@ -41,3 +41,5 @@ src/main/resources/application-secret.yml
 
 ### Claude Code ###
 .mcp.json
+
+.env
