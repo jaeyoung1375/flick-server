@@ -3,3 +3,9 @@ services:
     build: ..
     environment:
       SPRING_PROFILES_ACTIVE: local
+      SPRING_DATA_REDIS_PASSWORD: ""
+
+  redis:
+    command: redis-server
+    ports: !override
+      - "127.0.0.1:6379:6379"

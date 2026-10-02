@@ -9,7 +9,6 @@ spring:
     redis:
       host: localhost
       port: 6379
-      password: MyRedisPass123!
   servlet:
     multipart:
      max-file-size: 10MB
@@ -36,4 +35,4 @@ file:
     server: /upload
 
 app:
-  frontend-url: localhost:3000
+  frontend-url: http://localhost:3000

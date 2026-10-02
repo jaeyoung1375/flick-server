@@ -26,4 +26,4 @@ file:
     server: /upload
 
 app:
-  frontend-url: localhost:3000
+  frontend-url: https://netflick.vercel.app
