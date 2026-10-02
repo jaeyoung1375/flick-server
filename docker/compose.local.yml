@@ -1,0 +1,5 @@
+services:
+  backend:
+    build: ..
+    environment:
+      SPRING_PROFILES_ACTIVE: local
