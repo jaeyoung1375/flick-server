@@ -57,6 +57,13 @@
           AND STATUS = 'ACTIVE'
     </select>
 
+    <!-- 중복된 이메일이 있는지 확인 (회원가입용) -->
+    <select id="existsByEmail" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1 from USERS WHERE EMAIL = #{email}
+        )
+    </select>
+
     <!-- 신규 회원 등록 (USERS_SEQ로 채번된 userId가 selectKey를 통해 dto에 채워짐) -->
     <insert id="insertUser" parameterType="UserInsertDto">
         <selectKey keyProperty="userId" resultType="long" order="BEFORE">
@@ -64,29 +71,31 @@
         </selectKey>
 
         INSERT INTO USERS (
-        USER_ID         /* 회원아이디 */
-        , EMAIL         /* 이메일 */
-        , PASSWORD_HASH /* 비밀번호 해시 (소셜 전용 가입자는 NULL) */
-        , STATUS        /* 계정상태 */
-        , NAME          /* 이름 */
-        , PHONE         /* 휴대폰번호 */
-        , "ROLE"        /* 권한 */
-        , REG_DT        /* 등록일시 */
-        , MOD_DT        /* 변경일시 */
-        , GENDER        /* 성별 */
-        , BIRTH         /* 생년월일 */
+              USER_ID         /* 회원아이디 */
+            , EMAIL         /* 이메일 */
+            , PASSWORD_HASH /* 비밀번호 해시 (소셜 전용 가입자는 NULL) */
+            , STATUS        /* 계정상태 */
+            , NAME          /* 이름 */
+            , PHONE         /* 휴대폰번호 */
+            , "ROLE"        /* 권한 */
+            , REG_DT        /* 등록일시 */
+            , MOD_DT        /* 변경일시 */
+            , GENDER        /* 성별 */
+            , BIRTH         /* 생년월일 */
+            , NICKNAME      /* 닉네임 */
         ) VALUES (
-        #{userId},
-        #{email},
-        #{passwordHash},
-        #{status},
-        #{name},
-        #{phone},
-        #{role},
-        CURRENT_TIMESTAMP,
-        CURRENT_TIMESTAMP,
-        #{gender},
-        #{birth}
+              #{userId}
+            , #{email}
+            , #{passwordHash}
+            , #{status}
+            , #{name}
+            , #{phone}
+            , #{role}
+            , CURRENT_TIMESTAMP
+            , CURRENT_TIMESTAMP
+            , #{gender}
+            , #{birth}
+            , #{nickname}
         )
     </insert>
 

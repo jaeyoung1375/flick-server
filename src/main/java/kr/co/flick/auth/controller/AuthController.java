@@ -2,16 +2,15 @@ package kr.co.flick.auth.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import kr.co.flick.auth.dto.TokenResponseDto;
-import kr.co.flick.auth.dto.User;
-import kr.co.flick.auth.dto.UserProfileDto;
-import kr.co.flick.auth.dto.UserResponseDto;
+import jakarta.validation.Valid;
+import kr.co.flick.auth.dto.*;
 import kr.co.flick.auth.service.AuthService;
 import kr.co.flick.common.code.UserErrorCode;
 import kr.co.flick.common.exception.CustomException;
 import kr.co.flick.common.response.ApiResponse;
 import kr.co.flick.common.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseCookie;
 import org.springframework.web.bind.annotation.*;
@@ -74,5 +73,11 @@ public class AuthController {
         }
 
         return ApiResponse.ok(UserProfileDto.from(user));
+    }
+
+    @PostMapping("/join")
+    public ApiResponse<UserResponseDto> join(@Valid @RequestBody JoinRequestDto joinRequestDto){
+
+        return ApiResponse.ok(authService.join(joinRequestDto));
     }
 }

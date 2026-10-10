@@ -52,4 +52,7 @@ public class UserInsertDto {
     @Schema(description = "생년월일")
     private LocalDateTime birth;
 
+    @Schema(description = "닉네임")
+    private String nickname;
+
 }

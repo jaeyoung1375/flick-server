@@ -1,17 +1,16 @@
 package kr.co.flick.auth.service;
 
-import kr.co.flick.auth.dto.SocialAccount;
-import kr.co.flick.auth.dto.User;
-import kr.co.flick.auth.dto.UserInsertDto;
-import kr.co.flick.auth.dto.UserResponseDto;
+import kr.co.flick.auth.dto.*;
 import kr.co.flick.auth.enums.Role;
 import kr.co.flick.auth.mapper.AuthMapper;
 import kr.co.flick.auth.util.JwtTokenUtil;
 import kr.co.flick.common.code.UserErrorCode;
 import kr.co.flick.common.exception.CustomException;
+import kr.co.flick.configuration.PasswordConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +26,45 @@ public class AuthService {
     private final JwtTokenUtil jwtTokenUtil;
 
     private final StringRedisTemplate redisTemplate;
+
+    private final PasswordEncoder passwordEncoder;
+
+    @Transactional
+    public UserResponseDto join(JoinRequestDto joinRequestDto) {
+        /**
+         * 1. AuthMapper.findByEmail(userInserDto.getEmail())
+         *  1-2 중복 email인 경우, 예외처리
+         * 2. 비밀번호는 Bcrypt로 암호화 처리
+         * 3. userInserDto로 AuthMapper.insertUser()
+         *
+         */
+
+        boolean isExistsEmail = authMapper.existsByEmail(joinRequestDto.getEmail());
+        if (isExistsEmail) {
+            throw new CustomException(UserErrorCode.EMAIL_DUPLICATED); // 이미 사용중인 이메일입니다.
+        }
+
+        String encodedPassword = passwordEncoder.encode(joinRequestDto.getPassword());
+
+        UserInsertDto userInsertDto = UserInsertDto.builder()
+                .email(joinRequestDto.getEmail())
+                .passwordHash(encodedPassword)
+                .nickname(joinRequestDto.getNickname())
+                .status("ACTIVE")
+                .role(Role.USER)
+                .name(joinRequestDto.getNickname())
+                .build();
+
+        authMapper.insertUser(userInsertDto);
+
+
+        return issueToken(userInsertDto.getUserId(), userInsertDto.getRole(), true);
+
+
+
+
+
+    }
 
     @Transactional
     public UserResponseDto socialLogin(SocialAccount socialAccount, String name, String email){

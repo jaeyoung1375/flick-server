@@ -28,6 +28,13 @@ public interface AuthMapper {
     User findByEmail(String email);
 
     /**
+     * email로 중복 회원 조회(회원가입용)
+     * @param email
+     * @return boolean
+     */
+    boolean existsByEmail(String email);
+
+    /**
      * 신규 회원 등록. insert 후 USERS_SEQ로 채번된 값이 dto.userId에 채워짐
      */
     void insertUser(UserInsertDto userInsertDto);
