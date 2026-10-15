@@ -89,10 +89,10 @@ public class AuthController {
     private static void addRefreshTokenCookie(HttpServletResponse response, UserResponseDto result) {
         ResponseCookie cookie = ResponseCookie.from("refreshToken", result.getRefreshToken())
                 .httpOnly(true)
-                .secure(false)
+                .secure(true)
                 .path("/")
                 .maxAge(Duration.ofDays(14))
-                .sameSite("Lax")
+                .sameSite("None")
                 .build();
         response.addHeader("Set-Cookie", cookie.toString());
     }
