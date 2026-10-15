@@ -1,6 +1,7 @@
+name: flick
 services:
   backend:
-    build: /home/ubuntu/flick-server        # backend/Dockerfile 위치
+    build: ./        # backend/Dockerfile 위치
     container_name: backend
     restart: always
     env_file:
