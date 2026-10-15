@@ -34,14 +34,7 @@ public class AuthController {
 
         UserResponseDto result = authService.refresh(refreshToken);
 
-        ResponseCookie cookie = ResponseCookie.from("refreshToken", result.getRefreshToken())
-                .httpOnly(true)
-                .secure(false)
-                .path("/")
-                .maxAge(Duration.ofDays(14))
-                .sameSite("Lax")
-                .build();
-        response.addHeader("Set-Cookie", cookie.toString());
+        addRefreshTokenCookie(response, result);
 
         TokenResponseDto responseDto = TokenResponseDto
                 .builder()
@@ -52,6 +45,8 @@ public class AuthController {
         return ApiResponse.ok(responseDto);
 
     }
+
+
 
     @PostMapping("/logout")
     public ApiResponse<Void> logout(){
@@ -76,8 +71,29 @@ public class AuthController {
     }
 
     @PostMapping("/join")
-    public ApiResponse<UserResponseDto> join(@Valid @RequestBody JoinRequestDto joinRequestDto){
+    public ApiResponse<TokenResponseDto> join(@Valid @RequestBody JoinRequestDto joinRequestDto, HttpServletResponse response){
 
-        return ApiResponse.ok(authService.join(joinRequestDto));
+        UserResponseDto userResponseDto =  authService.join(joinRequestDto);
+
+        addRefreshTokenCookie(response, userResponseDto);
+
+        TokenResponseDto responseDto = TokenResponseDto
+                .builder()
+                .accessToken(userResponseDto.getAccessToken())
+                .isNew(userResponseDto.isNew())
+                .build();
+
+        return ApiResponse.ok(responseDto);
+    }
+
+    private static void addRefreshTokenCookie(HttpServletResponse response, UserResponseDto result) {
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", result.getRefreshToken())
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(Duration.ofDays(14))
+                .sameSite("Lax")
+                .build();
+        response.addHeader("Set-Cookie", cookie.toString());
     }
 }

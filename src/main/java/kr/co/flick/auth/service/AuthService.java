@@ -6,7 +6,6 @@ import kr.co.flick.auth.mapper.AuthMapper;
 import kr.co.flick.auth.util.JwtTokenUtil;
 import kr.co.flick.common.code.UserErrorCode;
 import kr.co.flick.common.exception.CustomException;
-import kr.co.flick.configuration.PasswordConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
