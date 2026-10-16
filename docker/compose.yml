@@ -14,6 +14,8 @@ services:
       SERVER_PORT: 9090
     ports:
       - "9090:9090"
+    volumes:
+      - /home/ubuntu/flick-server/logs:/logs
     depends_on:
       - postgres
       - redis
