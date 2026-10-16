@@ -86,6 +86,29 @@ public class AuthController {
         return ApiResponse.ok(responseDto);
     }
 
+    @PostMapping("/login")
+    public ApiResponse<TokenResponseDto> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response){
+
+        /**
+         * 1. email & password 가 존재하는지 확인
+         * 2. 존재하면 addRefeshTokenCookie 호출
+         *   2-2. 존재하지 않으면, 예외처리
+         *
+         */
+        UserResponseDto userResponseDto = authService.login(loginRequestDto);
+
+        addRefreshTokenCookie(response, userResponseDto);
+
+        TokenResponseDto responseDto = TokenResponseDto
+                .builder()
+                .accessToken(userResponseDto.getAccessToken())
+                .isNew(userResponseDto.isNew())
+                .build();
+
+        return ApiResponse.ok(responseDto);
+    }
+
+
     private static void addRefreshTokenCookie(HttpServletResponse response, UserResponseDto result) {
         ResponseCookie cookie = ResponseCookie.from("refreshToken", result.getRefreshToken())
                 .httpOnly(true)

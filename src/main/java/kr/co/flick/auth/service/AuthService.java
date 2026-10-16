@@ -12,6 +12,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.time.Duration;
 
@@ -59,11 +60,29 @@ public class AuthService {
 
         return issueToken(userInsertDto.getUserId(), userInsertDto.getRole(), true);
 
-
-
-
-
     }
+
+    @Transactional
+    public UserResponseDto login(LoginRequestDto loginRequestDto) {
+
+        if(!StringUtils.hasText(loginRequestDto.getEmail()) || !StringUtils.hasText(loginRequestDto.getPassword())){
+            throw new CustomException(UserErrorCode.INVALID_INFO);
+        }
+
+        User user = authMapper.findByEmail(loginRequestDto.getEmail());
+        if (user == null  || user.getPasswordHash() == null) {
+            throw new CustomException(UserErrorCode.INVALID_INFO);
+        }
+
+        boolean matches = passwordEncoder.matches(loginRequestDto.getPassword(), user.getPasswordHash());
+
+        if (!matches) {
+            throw new CustomException(UserErrorCode.INVALID_INFO);
+        }
+
+        return issueToken(user.getUserId(), user.getRole(), false);
+    }
+
 
     @Transactional
     public UserResponseDto socialLogin(SocialAccount socialAccount, String name, String email){
