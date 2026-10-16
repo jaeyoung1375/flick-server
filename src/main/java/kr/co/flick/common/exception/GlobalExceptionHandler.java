@@ -13,6 +13,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import kr.co.flick.common.code.ResponseCode;
 import kr.co.flick.common.response.ApiResponse;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -32,9 +37,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Void>> handleValidation(MethodArgumentNotValidException e){
 
+        List<String> fieldOrder = Arrays.stream(e.getTarget().getClass().getDeclaredFields())
+                .map(Field::getName)
+                .toList();
+
         String message = e.getBindingResult().getFieldErrors()
                 .stream()
-                .findFirst()
+                .min(Comparator.comparingInt(error -> fieldOrder.indexOf(error.getField())))
                 .map(FieldError::getDefaultMessage)
                 .orElse(CommonErrorCode.INVALID_INPUT.getMessage());
 
