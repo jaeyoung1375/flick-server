@@ -89,10 +89,10 @@ public class SocialOauth2SuccessHandler implements AuthenticationSuccessHandler 
 
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", result.getRefreshToken())
                 .httpOnly(true) // JS에서 document.cookie로 못 읽음 (XSS 방어)
-                .secure(false)  // HTTPS에서만 전송 (local이면 false로)
+                .secure(true)  // HTTPS에서만 전송 (local이면 false로)
                 .path("/")      // 어느 경로 요청이든 쿠키 첨부
                 .maxAge(Duration.ofMillis(refreshExpMs))
-                .sameSite("Lax") // 소셜 로그인 리다이렉트(다른 origin→우리 도메인)라 Lax 정도가 무난
+                .sameSite("None") // 소셜 로그인 리다이렉트(다른 origin→우리 도메인)라 Lax 정도가 무난
                 .build();
 
         response.addHeader("Set-Cookie", refreshCookie.toString());

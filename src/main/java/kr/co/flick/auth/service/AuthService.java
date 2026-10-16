@@ -133,6 +133,13 @@ public class AuthService {
         }
     }
 
+    /**
+     * 토큰발급.
+     * @param userId
+     * @param role
+     * @param isNew
+     * @return
+     */
     private UserResponseDto issueToken(Long userId, Role role, boolean isNew){
         authMapper.updateLastLoginDt(userId);
 
